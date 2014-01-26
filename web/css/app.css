@@ -1,0 +1,29 @@
+.current {
+	display: inline-block;
+	_display: inline
+}
+
+body {
+  padding-top: 70px
+}
+
+.ratings {
+  color: #d17581;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.thumbnail {
+  padding: 9px;
+  color: #333;
+}
+
+.thumbnail .caption-full {
+  padding: 9px;
+  color: #333;
+}
+
+footer {
+  margin: 50px 0;
+}
+

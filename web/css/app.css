@@ -3,6 +3,12 @@
 	_display: inline
 }
 
+.total {
+	text-align:right;
+	display: inline-block;
+	_display: inline
+}
+
 body {
   padding-top: 70px
 }

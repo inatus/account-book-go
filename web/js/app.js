@@ -16,6 +16,40 @@
 	var month = $("#month").text();
 	var syncCount;
 
+	showTotals();
+
+	function showTotals() {
+		var varExTotal, fixExTotal, revenueTotal, subtotal;
+		numeral.language("ja");
+		numeral.defaultFormat('$0,0');
+
+		$.ajax({
+  			url: "/api/account_service/variable_expenses/" + month.replace("/", "-") + "/total",
+  			success: function(html){
+				varExTotal = parseInt(html);
+  			}
+		}).pipe(function() {
+			return $.ajax({
+  				url: "/api/account_service/fixed_expenses/" + month.replace("/", "-") + "/total",
+  				success: function(html){
+					fixExTotal = parseInt(html);
+  				}
+			});
+		}).done(function() {
+			return $.ajax({
+	  			url: "/api/account_service/revenues/" + month.replace("/", "-") + "/total",
+	  			success: function(html){
+				revenueTotal = parseInt(html);
+				subtotal = revenueTotal - (varExTotal + fixExTotal);
+				$("#varExpenseTotal").text(numeral(varExTotal).format());
+				$("#fixExpenseTotal").text(numeral(fixExTotal).format());
+				$("#revenueTotal").text(numeral(revenueTotal).format());
+				$("#subtotal").text(numeral(subtotal).format());
+	  			}
+			});
+		})
+	}
+
 	var observer = {
 		countSync:function () {
 			console.log("+++observer.showArguments: ");
@@ -48,6 +82,7 @@
 				success: function(){
 					console.log("save successfully");
 					updateTable("submitVarExpense");
+					showTotals();
 				},
 				error: function(model, res){
 					console.log("error saving :" + res);
@@ -75,6 +110,7 @@
 				success: function(){
 					console.log("save successfully");
 					updateTable("submitFixExpense");
+					showTotals();
 				},
 				error: function(){
 					console.log("error saving");
@@ -102,6 +138,7 @@
 				success: function(){
 					console.log("save successfully");
 					updateTable("submitRevenue");
+					showTotals();
 				},
 				error: function(){
 					console.log("error saving");
@@ -399,6 +436,7 @@
 		updateTable("submitVarExpense");
 		updateTable("submitFixExpense");
 		updateTable("submitRevenue");
+		showTotals();
 		return false;
 	});
 

@@ -6,6 +6,8 @@ import (
 	"labix.org/v2/mgo/bson"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -80,6 +82,10 @@ type AccountService struct {
 	addRevenue        gorest.EndPoint `method:"POST" path:"/revenues" postdata:"Revenue"`
 	updateRevenue     gorest.EndPoint `method:"PUT" path:"/revenues/{Id:string}" postdata:"Revenue"`
 	updateRevenueList gorest.EndPoint `method:"PUT" path:"/revenues/" postdata:"[]Revenue"`
+
+	getVarExpenseMonthTotal       gorest.EndPoint `method:"GET" path:"/variable_expenses/{Month:string}/total/" output:"int"`
+	getFixExpenseMonthTotal       gorest.EndPoint `method:"GET" path:"/fixed_expenses/{Month:string}/total/" output:"int"`
+	getRevenueMonthTotal       gorest.EndPoint `method:"GET" path:"/revenues/{Month:string}/total/" output:"int"`
 }
 
 func (serv AccountService) ListVarExpenseCategory() []VarExpenseCategory {
@@ -208,5 +214,38 @@ func (serv AccountService) UpdateRevenueList(PostData []Revenue) {
 	}
 	// TODO: Client side should be able to get the JSON array
 	serv.ResponseBuilder().Write([]byte("{}"))
+}
+
+func getTotal(input string, query bson.M) int {
+	collection := mgoSession.DB(MONGO_DB_NAME).C(input)
+
+	var data map[string]int
+	iter := collection.Find(query).Select(bson.M{"price": 1}).Iter()
+	total := 0;
+	for iter.Next(&data) {
+		total += data["price"]
+	}
+	if err := iter.Close(); err != nil {
+		log.Fatal("Can't close iteration: %v\n", err)
+	}
+
+	log.Println(input + " total: " + strconv.Itoa(total))
+
+	return total
+}
+
+func (serv AccountService) GetVarExpenseMonthTotal(Month string) int {
+	regex := new(bson.RegEx)
+	regex.Pattern = "^" + strings.Replace(Month, "-", "/", -1)
+
+	return getTotal("varExpense", bson.M{"date": regex})
+}
+
+func (serv AccountService) GetFixExpenseMonthTotal(Month string) int {
+	return getTotal("fixExpense", bson.M{"month": strings.Replace(Month, "-", "/", -1)})
+}
+
+func (serv AccountService) GetRevenueMonthTotal(Month string) int {
+	return getTotal("revenue", bson.M{"month": strings.Replace(Month, "-", "/", -1)})
 }
 

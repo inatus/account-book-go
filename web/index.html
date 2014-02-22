@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="accountBook">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +46,7 @@
 	</div><!-- /.container -->
 </nav>
 
-<div class="container">
+<div class="container" ng-controller="input">
 
 	<div class="row">
 
@@ -121,8 +121,10 @@
 <!-- JavaScript -->
 <script src="lib/js/jquery-1.10.2.min.js"></script>
 <script src="lib/js/jquery.handsontable.full.js"></script>
-<script src="lib/js/underscore-min.js"></script>
-<script src="lib/js/backbone-min.js"></script>
+<script src="lib/js/angular.min.js"></script>
+<script src="lib/js/angular-animate.min.js"></script>
+<script src="lib/js/angular-resource.min.js"></script>
+<script src="lib/js/angular-route.min.js"></script>
 <script src="lib/js/bootstrap.js"></script>
 <script src="lib/js/numeral.min.js"></script>
 <script src="lib/js/languages.min.js"></script>

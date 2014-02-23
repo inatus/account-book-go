@@ -2,6 +2,7 @@ package main
 
 import (
 	"code.google.com/p/gorest"
+	"fmt"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"log"
@@ -48,6 +49,11 @@ type Revenue struct {
 	Price int           `json:"price" bson:"price"`
 }
 
+type MonthTotal struct {
+	Month int        `json:"month"`
+	Total int           `json:"total"`
+}
+
 func main() {
 	sess, err := mgo.Dial(MONGO_SERVER)
 	if err != nil {
@@ -59,8 +65,14 @@ func main() {
 
 	gorest.RegisterService(new(AccountService))
 	http.Handle("/", http.FileServer(http.Dir("web")))
+	http.HandleFunc("/input", RedirectHandler)
+	http.HandleFunc("/statistics", RedirectHandler)
 	http.Handle("/api/", gorest.Handle())
 	log.Fatal(http.ListenAndServe(":"+PORT, nil))
+}
+
+func RedirectHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 type AccountService struct {
@@ -83,9 +95,13 @@ type AccountService struct {
 	updateRevenue     gorest.EndPoint `method:"PUT" path:"/revenues/{Id:string}" postdata:"Revenue"`
 	updateRevenueList gorest.EndPoint `method:"PUT" path:"/revenues/" postdata:"[]Revenue"`
 
-	getVarExpenseMonthTotal       gorest.EndPoint `method:"GET" path:"/variable_expenses/{Month:string}/total/" output:"int"`
-	getFixExpenseMonthTotal       gorest.EndPoint `method:"GET" path:"/fixed_expenses/{Month:string}/total/" output:"int"`
-	getRevenueMonthTotal       gorest.EndPoint `method:"GET" path:"/revenues/{Month:string}/total/" output:"int"`
+	getVarExpenseMonthTotal gorest.EndPoint `method:"GET" path:"/variable_expenses/{Month:string}/total/" output:"int"`
+	getFixExpenseMonthTotal gorest.EndPoint `method:"GET" path:"/fixed_expenses/{Month:string}/total/" output:"int"`
+	getRevenueMonthTotal    gorest.EndPoint `method:"GET" path:"/revenues/{Month:string}/total/" output:"int"`
+
+	getListVarExpenseYearTotal gorest.EndPoint `method:"GET" path:"/variable_expenses/{Year:string}/totals/" output:"[]MonthTotal"`
+	getListFixExpenseYearTotal    gorest.EndPoint `method:"GET" path:"/fixed_expenses/{Year:string}/totals/" output:"[]MonthTotal"`
+	getListRevenueYearTotal    gorest.EndPoint `method:"GET" path:"/revenues/{Year:string}/totals/" output:"[]MonthTotal"`
 }
 
 func (serv AccountService) ListVarExpenseCategory() []VarExpenseCategory {
@@ -221,7 +237,7 @@ func getTotal(input string, query bson.M) int {
 
 	var data map[string]int
 	iter := collection.Find(query).Select(bson.M{"price": 1}).Iter()
-	total := 0;
+	total := 0
 	for iter.Next(&data) {
 		total += data["price"]
 	}
@@ -249,3 +265,35 @@ func (serv AccountService) GetRevenueMonthTotal(Month string) int {
 	return getTotal("revenue", bson.M{"month": strings.Replace(Month, "-", "/", -1)})
 }
 
+func (serv AccountService) GetListVarExpenseYearTotal(Year string) ([]MonthTotal) {
+	result := []MonthTotal{}
+	regex := new(bson.RegEx)
+	for month := 1; month <= 12; month++ {
+		regex.Pattern = "^" + Year + "/" + fmt.Sprintf("%02d", month)
+		monthTotal := MonthTotal{month, 0}
+		monthTotal.Total = getTotal("varExpense", bson.M{"date": regex})
+		result = append(result, monthTotal)
+	}
+
+	return result
+}
+
+func (serv AccountService) GetListFixExpenseYearTotal(Year string) ([]MonthTotal) {
+	result := []MonthTotal{}
+	for month := 1; month <= 12; month++ {
+		monthTotal := MonthTotal{month, 0}
+		monthTotal.Total = getTotal("fixExpense", bson.M{"month": Year + "/" + fmt.Sprintf("%02d", month)})
+		result = append(result, monthTotal)
+	}
+	return result
+}
+
+func (serv AccountService) GetListRevenueYearTotal(Year string) ([]MonthTotal) {
+	result := []MonthTotal{}
+	for month := 1; month <= 12; month++ {
+		monthTotal := MonthTotal{month, 0}
+		monthTotal.Total = getTotal("revenue", bson.M{"month": Year + "/" + fmt.Sprintf("%02d", month)})
+		result = append(result, monthTotal)
+	}
+	return result
+}

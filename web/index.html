@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="accountBook">
+<html lang="en" ng-app="AccountBook">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
 <meta name="author" content="">
+
+<base href="/" />
 
 <title>Account Book</title>
 
@@ -24,7 +26,7 @@
 <body>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	<div class="container">
+	<div class="container" ng-controller="MenuCtrl">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
 				<span class="sr-only">Toggle navigation</span>
@@ -32,75 +34,21 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#home">Start Bootstrap</a>
+			<a class="navbar-brand" ng-click="input()" href="">Start Bootstrap</a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse navbar-ex1-collapse">
 			<ul class="nav navbar-nav">
-				<li><a href="#about">Input</a></li>
-				<li><a href="#services">Statistics</a></li>
-				<li><a href="#contact">Contact</a></li>
+				<li><a ng-click="input()" href="">Input</a></li>
+				<li><a ng-click="statistics()" href="">Statistics</a></li>
 			</ul>
 		</div><!-- /.navbar-collapse -->
 	</div><!-- /.container -->
 </nav>
 
-<div class="container" ng-controller="input">
-
-	<div class="row">
-
-		<div class="col-md-3">
-			<p class="lead">Account Book</p>
-			<div class="list-group">
-				<p>2014</p>
-				<div class="total">変動費合計 <div class="total" id="varExpenseTotal"></div><br>固定費合計 <div class="total" id="fixExpenseTotal"></div><br>収入合計 <div class="total" id="revenueTotal"></div><br>残高 <div class="total" id="subtotal"></div></div>
-				<a href="#" id="2014/12" class="list-group-item">December</a>
-				<a href="#" id="2014/11" class="list-group-item">November</a>
-				<a href="#" id="2014/10" class="list-group-item">October</a>
-				<a href="#" id="2014/09" class="list-group-item">September</a>
-				<a href="#" id="2014/08" class="list-group-item">August</a>
-				<a href="#" id="2014/07" class="list-group-item">July</a>
-				<a href="#" id="2014/06" class="list-group-item">June</a>
-				<a href="#" id="2014/05" class="list-group-item">May</a>
-				<a href="#" id="2014/04" class="list-group-item">April</a>
-				<a href="#" id="2014/03" class="list-group-item">March</a>
-				<a href="#" id="2014/02" class="list-group-item">February</a>
-				<a href="#" id="2014/01" class="list-group-item active">January</a>
-			</div>
-		</div>
-
-		<div class="col-md-9">
-
-			<div class="thumbnail">
-
-				<div class="row">
-					<div class="col-md-12">
-						<div class="current" id="month">2014/01</div>
-						<hr>
-						<input id="date" type="text" name="date" value="04" size=15>
-						<img src="img/date.png"></a>
-				</div>
-			</div>
-
-
-			<div class="row">
-			</div>
-			<div id="varExpense"></div>
-			<input id="submitVarExpense" class="submit btn btn-primary btn-large" type="button" value="登録"/>
-
-			<hr>
-			<div id="fixExpense"></div>
-			<input id="submitFixExpense" class="submit btn btn-primary btn-large" type="button" value="登録"/>
-
-			<hr>
-			<div id="revenue"></div>
-			<input id="submitRevenue" class="submit btn btn-primary btn-large" type="button" value="登録"/>
-
-		</div>
-
-	</div>
-
+<div class="container">
+	<div ng-view class="mainview">
 </div><!-- /.container -->
 
 <div class="container">
@@ -133,5 +81,7 @@
 <script src="lib/js/jquery.ui.datepicker.min.js"></script>
 <script src="lib/js/jquery.ui.datepicker-ja.min.js"></script>
 <script src="js/app.js"></script>
+<script src="js/input.js"></script>
+<script src="js/statistics.js"></script>
 </body>
 </html>

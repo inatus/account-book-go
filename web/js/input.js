@@ -16,6 +16,8 @@ function InputCtrl($scope, $http){
 	var month = $("#month").text();
 	var syncCount;
 
+	$("#" + yy + "-" + mm).attr("class", "list-group-item active");
+
 	showTotals();
 
 	function showTotals() {
@@ -84,7 +86,8 @@ function InputCtrl($scope, $http){
 			})));
 			$varExContainer.handsontable({
 				data : varExTable,
-				//colWidths: 120,
+				colWidths: [110,150,80],
+				manualColumnResize: true,	
 				rowHeaders: true,
 				colHeaders: true,
 				contextMenu: ['row_above', 'row_below', 'hsep1', 'undo', 'redo'],
@@ -118,7 +121,9 @@ function InputCtrl($scope, $http){
 			})));
 			$fixExContainer.handsontable({
 				data : fixExTable,
-				//colWidths: 120,
+				colWidths: [150, 80],
+				manualColumnResize: true,
+				wordWrap: true,
 				rowHeaders: true,
 				colHeaders: true,
 				contextMenu: ['row_above', 'row_below', 'hsep1', 'undo', 'redo'],
@@ -147,7 +152,8 @@ function InputCtrl($scope, $http){
 			})));
 			$revenueContainer.handsontable({
 				data : revenueTable,
-				//colWidths: 120,
+				colWidths: [150, 80],
+				manualColumnResize: true,
 				rowHeaders: true,
 				colHeaders: true,
 				contextMenu: ['row_above', 'row_below', 'hsep1', 'undo', 'redo'],
@@ -321,6 +327,7 @@ function InputCtrl($scope, $http){
 				data : targets,
 			}).
 			then(function(data, status, headers, config) {
+				toastr.success('データを追加しました')
 				varExCategories = data.data;
 				updateTable("submitVarExpense");
 				showTotals();
@@ -336,7 +343,7 @@ function InputCtrl($scope, $http){
 		console.log("month clicked");
 		$(".list-group-item").attr("class", "list-group-item");
 		$(this).attr("class", "list-group-item active");
-		$("#month").text($(this).attr("id"));
+		$("#month").text($(this).attr("id").replace("-", "/"));
 		$("#date").val($("#month").text() + "/01");
 		date = $("#date").val();
 		month = $("#month").text();

@@ -16,6 +16,8 @@
 <!-- Handsontable CSS -->
 <link href="lib/css/jquery.handsontable.full.css" rel="stylesheet">
 <link href="lib/css/jquery-ui.custom.css" rel="stylesheet">
+<link href="lib/css/wcAngularOverlay.css" rel="stylesheet">
+<link href="lib/css/toastr.css" rel="stylesheet">
 <link href="lib/css/images/*.png" rel="stylesheet">
 
 <!-- Add custom CSS here -->
@@ -24,6 +26,10 @@
 </head>
 
 <body>
+
+<div data-wc-overlay="" data-wc-overlay-delay="100">
+    <br /><img src="img/spinner.gif" />&nbsp;&nbsp;Loading
+</div>
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 	<div class="container" ng-controller="MenuCtrl">
@@ -48,12 +54,12 @@
 </nav>
 
 <div class="container">
-	<div ng-view class="mainview">
+	<div class="mainpart">
+		<div ng-view class="mainview" />
+	</div>
 </div><!-- /.container -->
 
 <div class="container">
-
-	<hr>
 
 	<footer>
 		<div class="row">
@@ -80,6 +86,8 @@
 <script src="lib/js/jquery.ui.core.min.js"></script>
 <script src="lib/js/jquery.ui.datepicker.min.js"></script>
 <script src="lib/js/jquery.ui.datepicker-ja.min.js"></script>
+<script src="lib/js/wcAngularOverlay.js"></script>
+<script src="lib/js/toastr.js"></script>
 <script src="js/app.js"></script>
 <script src="js/input.js"></script>
 <script src="js/statistics.js"></script>

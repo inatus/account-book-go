@@ -93,7 +93,7 @@ function StatisticsCtrl($location, $scope, $resource) {
 		// Show table
 			$("#statisticsTable").handsontable({
 				data : data,
-				//colWidths: 120,
+				colWidths: [100,80,80,80,80,80,80,80,80,80,80,80,80],
 				readOnly: true,
 				rowHeaders: false,
 				colHeaders: true,

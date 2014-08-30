@@ -1,4 +1,4 @@
-var app = angular.module("AccountBook", ["ngResource", 'ngRoute', 'ngAnimate']);
+var app = angular.module("AccountBook", ["ngResource", 'ngRoute', 'ngAnimate', 'wc.Directives']);
 
 app.config(function($routeProvider, $locationProvider) {
  
